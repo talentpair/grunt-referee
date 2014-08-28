@@ -1,6 +1,6 @@
 # grunt-referee [![Build Status](https://travis-ci.org/talentpair/grunt-referee.svg?branch=master)](https://travis-ci.org/talentpair/grunt-referee) [![NPM version](https://badge.fury.io/js/grunt-referee.svg)](http://badge.fury.io/js/grunt-referee)
 
-> Prevents overwriting a previously built project (typically referred to as a release), but makes exceptions for custom patterns. This plugin reads from the `package.json` for the version and won't run a task if that version already exists. If you wish to overwite a version for development you can add "rc" to the end of your version in `package.json`. If you wish to use something other than rc you can add set a custom pattern in options.
+> Prevents overwriting a previously built project (typically referred to as a release), but makes exceptions for custom patterns. This plugin reads from the `package.json` for the version and won't run a task if that version already exists. If you wish to overwite a version for development you can add "rc" to the end of your version in `package.json`. If you wish to use something other than rc you can set a custom pattern.
 
 
 ## Getting Started
