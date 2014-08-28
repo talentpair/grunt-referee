@@ -1,6 +1,7 @@
-# grunt-referee
+# grunt-referee [![Build Status](https://travis-ci.org/talentpair/grunt-referee.svg?branch=master)](https://travis-ci.org/talentpair/grunt-referee) [![NPM version](https://badge.fury.io/js/grunt-referee.svg)](http://badge.fury.io/js/grunt-referee)
 
-> Prevents overriding releases, but makes exceptions for custom patterns.
+> Prevents overwriting a previous built project (typically referred to as a release), but makes exceptions for custom patterns. This plugin reads from the version in `package.json` and won't run a task if that version already exists. If you wish to overwite a version for development you can add "rc" to the end of your version in `package.json`. If you wish to use something other than rc you can add set a custom pattern in options.
+
 
 ## Getting Started
 This plugin requires Grunt `~0.4.5`
@@ -25,59 +26,88 @@ In your project's Gruntfile, add a section named `referee` to the data object pa
 ```js
 grunt.initConfig({
   referee: {
-    options: {
-      // Task-specific options go here.
+      build: {
+        options: {
+          pattern: /([rc])+/g,
+          tasks: [
+            'clean:dist',
+            'wiredep',
+            'useminPrepare',
+            'concurrent:dist',
+            'autoprefixer',
+            'concat',
+            'ngmin',
+            'cdnify',
+            'cssmin',
+            'uglify',
+            'usemin',
+            'htmlmin'
+          ]
+        }
+      }
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
 });
 ```
 
 ### Options
 
-#### options.separator
+#### options.patterns
+Type: `Regex`
+Default value: `/([rc])+/g`
+
+A pattern that determines your version is safe to overwrite. *Typically used for development. 
+
+#### options.tasks
+Type: `Array`
+Default value: `['build']`
+
+The tasks that you want to run when you "build" you're project.
+
+#### options.warning
 Type: `String`
-Default value: `',  '`
+Default value: `WARNING!!! - Version {{version}} has already been released and cannot be overwritten.`
 
-A string value that is used to do something with whatever.
-
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
-
-A string value that is used to do something else with whatever else.
+A warning message to display when someone tries to build the a project that has already been built.
 
 ### Usage Examples
 
 #### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
+As stated before, the default task the plugin runs if no tasks are it `build`. The main purpose of
+this plugin is to provide a layer of protection of the version you want to release and the build standard
+build task you use which can sometimes be distructive.
 
 ```js
 grunt.initConfig({
   referee: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
+    options: {}
   },
 });
+
+// Your projects build tasks
+grunt.registerTask('build', ['clean', 'lesslint', 'jshint', 'cssmin', 'concat']);
+
+// Alias for referee
+grunt.registerTask('release', ['referee']);
 ```
 
 #### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
+If you wish, you can overwrite the default referee settings. The example below completely removes
+the afformentioned `build` task and funnels everything through referee.
 
 ```js
 grunt.initConfig({
   referee: {
     options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
+      pattern: /([rc])+/g,
+      warning: 'Yo fool, you already released that.'
+      tasks: [
+        'clean',
+        'lesslint',
+        'jshint',
+        'cssmin',
+        'concat'
+      ]
+    }
   },
 });
 ```
