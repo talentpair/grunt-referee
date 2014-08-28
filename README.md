@@ -28,7 +28,7 @@ grunt.initConfig({
   referee: {
       build: {
         options: {
-          pattern: /([rc])+/g,
+          pattern: /(rc)+/g,
           tasks: [
             'clean:dist',
             'wiredep',
