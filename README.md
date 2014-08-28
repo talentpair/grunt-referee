@@ -51,11 +51,17 @@ grunt.initConfig({
 
 ### Options
 
-#### options.patterns
-Type: `Regex`
-Default value: `/([rc])+/g`
+#### options.baseUrl
+Type: `String`
+Default value: `../../../`
 
-A pattern that determines your version is safe to overwrite. *Typically used for development. 
+The default is the standard fs for node modules.
+
+#### options.pattern
+Type: `Regex`
+Default value: `/(rc)+/g`
+
+A pattern that determines your version is safe to overwrite. *Typically used for development. *rc = release candidate.
 
 #### options.tasks
 Type: `Array`
@@ -98,8 +104,8 @@ the afformentioned `build` task and funnels everything through referee.
 grunt.initConfig({
   referee: {
     options: {
-      pattern: /([rc])+/g,
-      warning: 'Yo fool, you already released that.'
+      pattern: /(rc)+/g,
+      warning: 'Yo fool, you already released that.',
       tasks: [
         'clean',
         'lesslint',
