@@ -10,47 +10,94 @@
 
 module.exports = function(grunt) {
 
+  var versions = {
+    suite1: require('./test/fixtures/suite1/package.json').version,
+    suite2: require('./test/fixtures/suite2/package.json').version
+  };
+
   // Project configuration.
   grunt.initConfig({
     jshint: {
       all: [
         'Gruntfile.js',
         'tasks/*.js',
-        '<%= nodeunit.tests %>'
+        'test/fixtures/*.js'
       ],
       options: {
         jshintrc: '.jshintrc'
       }
     },
-
-    // Before generating any new files, remove any previously-created files.
-    clean: {
-      tests: ['tmp']
-    },
-
-    // Configuration to be run (and then tested).
-    referee: {
-      default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
+    concat: {
+      options: {
+        separator: ';',
       },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
+      distOne: {
+        src: [
+          'test/fixtures/module-one.js', 'test/fixtures/module-two.js'],
+        dest: 'test/fixtures/suite1/dist/' + versions.suite1 + '/built.js',
+      },
+      distOneChange: {
+        src: [
+          'test/fixtures/module-one.js',
+          'test/fixtures/module-two.js',
+          'test/fixtures/module-three.js'
+        ],
+        dest: 'test/fixtures/suite1/dist/' + versions.suite1 + '/built.js',
+      },
+      distTwo: {
+        src: ['test/fixtures/module-one.js', 'test/fixtures/module-two.js'],
+        dest: 'test/fixtures/suite2/dist/' + versions.suite2 + '/built.js',
+      },
+      distTwoChange: {
+        src: [
+          'test/fixtures/module-one.js',
+          'test/fixtures/module-two.js',
+          'test/fixtures/module-three.js'
+        ],
+        dest: 'test/fixtures/suite2/dist/' + versions.suite2 + '/built.js',
       }
     },
-
-    // Unit tests.
+    clean: ['test/fixtures/suite1/dist', 'test/fixtures/suite2/dist'],
     nodeunit: {
-      tests: ['test/*_test.js']
+      all: ['test/**/*-spec.js']
+    },
+    referee: {
+      initialReleaseOne: {
+        options: {
+          tasks: [
+            'jshint',
+            'concat:distOne'
+          ],
+          baseUrl: 'test/fixtures/suite1/'
+        }
+      },
+      initialReleaseTwo: {
+        options: {
+          tasks: [
+            'jshint',
+            'concat:distTwo'
+          ],
+          baseUrl: 'test/fixtures/suite2/'
+        }
+      },
+      buildOne: {
+        options: {
+          tasks: [
+            'jshint',
+            'concat:distOneChange'
+          ],
+          baseUrl: 'test/fixtures/suite1/'
+        }
+      },
+      buildTwo: {
+        options: {
+          tasks: [
+            'jshint',
+            'concat:distTwoChange'
+          ],
+          baseUrl: 'test/fixtures/suite2/'
+        }
+      }
     }
 
   });
@@ -59,15 +106,21 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks');
 
   // These plugins provide necessary tasks.
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
 
-  // Whenever the "test" task is run, first clean the "tmp" dir, then run this
-  // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'referee', 'nodeunit']);
-
   // By default, lint and run all tests.
-  grunt.registerTask('default', ['jshint', 'test']);
+  grunt.registerTask('default', ['jshint']);
+
+  grunt.registerTask('test', [
+    'clean',
+    'referee:initialReleaseOne',
+    'referee:initialReleaseTwo',
+    'referee:buildOne',
+    'referee:buildTwo',
+    'nodeunit'
+  ]);
 
 };

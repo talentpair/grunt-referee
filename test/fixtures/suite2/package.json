@@ -1,0 +1,9 @@
+{
+  "name": "TestPKG",
+  "version": "0.0.0rc",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=0.10.0"
+  }
+}

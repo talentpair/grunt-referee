@@ -1,6 +1,6 @@
 /*
  * grunt-simplever
- * https://github.com/talentpair/grunt-referee
+ * https://github.com/talentpair/grunt-simplever
  *
  * Copyright (c) 2014 Scott Sword
  * Licensed under the MIT license.
@@ -25,7 +25,7 @@ module.exports = function(grunt) {
   };
 
 
-  grunt.registerMultiTask('referee', 'Prevents overriding releases, but makes exceptions for custom patterns.', function referee() {
+  grunt.registerMultiTask('simplever', 'Prevents overriding releases, but makes exceptions for custom patterns.', function simplever() {
 
     var config = _.extend(defaults, this.options()),
         pkg = grunt.file.readJSON(config.baseUrl + 'package.json'),
